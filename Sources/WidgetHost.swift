@@ -19,7 +19,7 @@ final class WidgetHost: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let menu = NSMenu()
         let applicationItem = NSMenuItem()
         menu.addItem(applicationItem)
-        applicationItem.submenu = NSMenu(title: "ChatGPT Widget")
+        applicationItem.submenu = NSMenu(title: "ChatLedge")
 
         let editItem = NSMenuItem()
         menu.addItem(editItem)
@@ -68,8 +68,8 @@ final class WidgetHost: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let image = NSImage(named: "ChatGPTMenuTemplate")
         image?.isTemplate = true
         item.button?.image = image
-        item.button?.toolTip = "ChatGPT Widget"
-        item.button?.setAccessibilityLabel("ChatGPT Widget")
+        item.button?.toolTip = "ChatLedge"
+        item.button?.setAccessibilityLabel("ChatLedge")
         if image == nil {
             item.button?.title = "GPT"
         }
@@ -77,11 +77,11 @@ final class WidgetHost: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let menu = NSMenu()
         menu.delegate = self
         menu.autoenablesItems = false
-        menu.addItem(withTitle: "Open ChatGPT Widget", action: #selector(showPanel), keyEquivalent: "").target = self
+        menu.addItem(withTitle: "Open ChatLedge", action: #selector(showPanel), keyEquivalent: "").target = self
         let hide = menu.addItem(withTitle: "Hide Panel", action: #selector(hidePanel), keyEquivalent: "")
         hide.target = self
         menu.addItem(.separator())
-        menu.addItem(withTitle: "Quit ChatGPT Widget", action: #selector(quit), keyEquivalent: "").target = self
+        menu.addItem(withTitle: "Quit ChatLedge", action: #selector(quit), keyEquivalent: "").target = self
         hidePanelItem = hide
         item.menu = menu
         statusItem = item

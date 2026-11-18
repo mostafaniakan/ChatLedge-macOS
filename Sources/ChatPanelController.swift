@@ -26,7 +26,7 @@ final class ChatPanelController: NSWindowController, NSWindowDelegate, WKNavigat
         )
         super.init(window: panel)
 
-        panel.title = "ChatGPT"
+        panel.title = "ChatLedge"
         panel.appearance = NSAppearance(named: .darkAqua)
         panel.backgroundColor = .clear
         panel.isOpaque = false
@@ -163,7 +163,7 @@ final class ChatPanelController: NSWindowController, NSWindowDelegate, WKNavigat
 
         let dragArea = ChatPanelDragArea()
         dragArea.translatesAutoresizingMaskIntoConstraints = false
-        dragArea.toolTip = "Move ChatGPT Widget"
+        dragArea.toolTip = "Move ChatLedge"
         content.addSubview(dragArea)
 
         let collapseImage = NSImage(

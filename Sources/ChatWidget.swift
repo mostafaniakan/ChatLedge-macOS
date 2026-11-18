@@ -83,7 +83,7 @@ struct ChatWidget: Widget {
         StaticConfiguration(kind: "ChatGPTShortcuts", provider: ChatProvider()) { _ in
             ChatWidgetView()
         }
-        .configurationDisplayName("ChatGPT")
+        .configurationDisplayName("ChatLedge")
         .description("Open the floating ChatGPT panel from your desktop.")
         .supportedFamilies([.systemSmall, .systemMedium])
     }

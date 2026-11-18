@@ -8,7 +8,7 @@ mkdir -p "$output"
 staging="$(mktemp -d "$output/.staging.XXXXXX")"
 trap 'rm -rf "$staging"' EXIT
 
-name="ChatGPT Widget.app"
+name="ChatLedge.app"
 app="$staging/$name"
 widget="$app/Contents/PlugIns/ChatGPTShortcuts.appex"
 mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources" "$widget/Contents/MacOS"
@@ -37,11 +37,11 @@ if [[ "$signing_identity" == "Developer ID Application:"* ]]; then
     signing_args+=(--timestamp --options runtime)
 fi
 codesign "${signing_args[@]}" --entitlements Config/Widget.entitlements "$widget"
-codesign "${signing_args[@]}" "$app"
+codesign "${signing_args[@]}" --entitlements Config/App.entitlements "$app"
 codesign --verify --deep --strict "$app"
 
 # Keep the built copy archived so LaunchServices only sees the installed app.
-archive="ChatGPT Widget.zip"
+archive="ChatLedge.zip"
 ditto -c -k --keepParent "$app" "$staging/$archive"
 mv -f "$staging/$archive" "$output/$archive"
 printf '%s\n' "$output/$archive"
