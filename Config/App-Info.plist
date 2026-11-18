@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleDevelopmentRegion</key><string>en</string>
+    <key>CFBundleDisplayName</key><string>ChatGPT Widget</string>
+    <key>CFBundleExecutable</key><string>ChatGPTWidget</string>
+    <key>CFBundleIdentifier</key><string>local.chatgptdesktop.widget</string>
+    <key>CFBundleIconFile</key><string>ChatWidget.icns</string>
+    <key>CFBundleInfoDictionaryVersion</key><string>6.0</string>
+    <key>CFBundleName</key><string>ChatGPT Widget</string>
+    <key>CFBundlePackageType</key><string>APPL</string>
+    <key>CFBundleShortVersionString</key><string>1.0</string>
+    <key>CFBundleVersion</key><string>15</string>
+    <key>CFBundleSupportedPlatforms</key><array><string>MacOSX</string></array>
+    <key>DTPlatformName</key><string>macosx</string>
+    <key>LSMinimumSystemVersion</key><string>14.0</string>
+    <key>LSUIElement</key><true/>
+    <key>NSPrincipalClass</key><string>NSApplication</string>
+    <key>NSMicrophoneUsageDescription</key><string>Use your microphone for ChatGPT Voice when you choose to start a voice conversation.</string>
+    <key>NSCameraUsageDescription</key><string>Share your camera with ChatGPT when you choose to turn video on.</string>
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleTypeRole</key><string>Viewer</string>
+            <key>CFBundleURLName</key><string>local.chatgptdesktop.widget</string>
+            <key>CFBundleURLSchemes</key><array><string>chatgpt-desktop-widget</string></array>
+        </dict>
+    </array>
+</dict>
+</plist>
