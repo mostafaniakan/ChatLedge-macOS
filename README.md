@@ -12,9 +12,9 @@ ChatLedge is an independent project built with AppKit, SwiftUI, WidgetKit, and W
 
 ## Build from source
 
-Run this command from the project directory.
-
 ```sh
+git clone https://github.com/mostafaniakan/ChatLedge-macOS.git
+cd ChatLedge-macOS
 bash build.sh
 ```
 
@@ -43,3 +43,7 @@ When upgrading from a development build named **ChatGPT Widget.app**, quit that 
 Use **Log in** inside the panel. WebKit stores the website session on your Mac between launches. Your sign-in method and available ChatGPT features depend on your account and WebKit compatibility. Google restricts OAuth sign-in in embedded web views. [Google’s desktop OAuth documentation](https://developers.google.com/identity/protocols/oauth2/native-app)
 
 The desktop card uses WidgetKit for its shortcuts. Typing and web browsing happen in the panel. [Apple’s WidgetKit documentation](https://developer.apple.com/documentation/widgetkit/creating-a-widget-extension)
+
+## License
+
+[MIT](LICENSE)
