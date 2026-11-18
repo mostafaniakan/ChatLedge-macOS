@@ -10,6 +10,20 @@ ChatLedge is an independent project built with AppKit, SwiftUI, WidgetKit, and W
 - Xcode or Apple Command Line Tools with Swift and the macOS SDK
 - Internet access to use ChatGPT
 
+## Install from Terminal
+
+Run this command in Terminal. It builds ChatLedge for your Mac and installs it in **Applications**.
+
+```sh
+installer="$(curl -fsSL https://raw.githubusercontent.com/mostafaniakan/ChatLedge-macOS/main/install.sh)" && /bin/bash -c "$installer"
+```
+
+If you need Apple's Command Line Tools, run `xcode-select --install`, then rerun the installation command when the tools finish installing.
+
+### Upgrade an existing installation
+
+If **ChatGPT Widget.app** or **ChatLedge.app** is already in **Applications**, quit it and move the old app out of **Applications** before reinstalling. Then open **ChatLedge** once so macOS registers the current widget.
+
 ## Build from source
 
 ```sh
@@ -22,19 +36,16 @@ The script builds for your Mac’s architecture and creates `build/ChatLedge.zip
 
 ## Install the widget
 
-1. Open the ZIP in Finder and move **ChatLedge.app** to **Applications**.
-2. Open the app once so macOS can register its WidgetKit extension.
-3. Control-click the desktop, choose **Edit Widgets**, and search for **ChatLedge**.
-4. Add the **Small** widget for a square launcher or **Medium** for separate **New chat** and **Open ChatGPT** shortcuts.
-
-When upgrading from a development build named **ChatGPT Widget.app**, quit that copy and move it to the Trash before installing **ChatLedge.app** to avoid duplicate widget registrations.
+1. Open **ChatLedge** from **Applications** once so macOS can register its WidgetKit extension. If you built from source, open the ZIP in Finder and move **ChatLedge.app** to **Applications** first.
+2. Control-click the desktop, choose **Edit Widgets**, and search for **ChatLedge**.
+3. Add the **Small** widget for a square launcher or **Medium** for separate **New chat** and **Open ChatGPT** shortcuts.
 
 ## Use the panel
 
 - Click the desktop widget to open the panel. Its starting size is 340 × 420 points.
 - Drag the handle at the bottom to move it, or drag the lower-right corner to resize it. The app remembers the size and position.
-- Click the **×** button, or press **Escape** or **⌘W**, to hide the panel. It also hides after 30 minutes of inactivity. Click the widget to return to the page you were on.
-- When another site opens in the panel, click **Back to ChatGPT** to return to ChatGPT.
+- When another site opens inside the panel, click **Back to ChatGPT** in the bottom left to return to your previous ChatGPT page.
+- Click the **×** button in the bottom right, or press **Escape** or **⌘W**, to hide the panel. It also hides after 30 minutes of inactivity. Click the widget to return to the page you were on.
 - Control-click the panel for **Keep on Top**, **Reload**, and other panel actions. The panel turns translucent when it loses focus.
 - Paste into the chat field with **⌘V** or Control-click the panel and choose **Paste**.
 - Use the double-bubble icon in the menu bar to show or hide the panel, or choose **Quit ChatLedge** to exit.
