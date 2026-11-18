@@ -213,6 +213,9 @@ final class ChatPanelController: NSWindowController, NSWindowDelegate, WKNavigat
         back.target = self
         back.isEnabled = webView.canGoBack
         menu.addItem(withTitle: "Reload", action: #selector(reload), keyEquivalent: "").target = self
+        let pasteAction = #selector(NSText.paste(_:))
+        let paste = menu.addItem(withTitle: "Paste", action: pasteAction, keyEquivalent: "v")
+        paste.isEnabled = NSApplication.shared.target(forAction: pasteAction) != nil
         menu.addItem(.separator())
         let pin = menu.addItem(withTitle: "Keep on Top", action: #selector(togglePin), keyEquivalent: "")
         pin.target = self
@@ -407,9 +410,18 @@ private final class ChatPanelWindow: NSWindow {
         case .keyDown:
             onInteraction?()
             let modifiers = event.modifierFlags.intersection([.command, .option, .control, .shift])
-            if modifiers == .command && event.charactersIgnoringModifiers == "w" && attachedSheet == nil {
-                onCollapse?()
-                return
+            if modifiers == .command && attachedSheet == nil {
+                switch event.charactersIgnoringModifiers?.lowercased() {
+                case "w":
+                    onCollapse?()
+                    return
+                case "v":
+                    if NSApplication.shared.sendAction(#selector(NSText.paste(_:)), to: nil, from: self) {
+                        return
+                    }
+                default:
+                    break
+                }
             }
         case .leftMouseDown, .rightMouseDown:
             onInteraction?()

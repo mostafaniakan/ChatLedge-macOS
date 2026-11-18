@@ -11,7 +11,25 @@ final class WidgetHost: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let app = NSApplication.shared
         let delegate = WidgetHost()
         app.delegate = delegate
+        app.mainMenu = makeMainMenu()
         withExtendedLifetime(delegate) { app.run() }
+    }
+
+    private static func makeMainMenu() -> NSMenu {
+        let menu = NSMenu()
+        let applicationItem = NSMenuItem()
+        menu.addItem(applicationItem)
+        applicationItem.submenu = NSMenu(title: "ChatGPT Widget")
+
+        let editItem = NSMenuItem()
+        menu.addItem(editItem)
+        let edit = NSMenu(title: "Edit")
+        editItem.submenu = edit
+        edit.addItem(withTitle: "Cut", action: #selector(NSText.cut(_:)), keyEquivalent: "x")
+        edit.addItem(withTitle: "Copy", action: #selector(NSText.copy(_:)), keyEquivalent: "c")
+        edit.addItem(withTitle: "Paste", action: #selector(NSText.paste(_:)), keyEquivalent: "v")
+        edit.addItem(withTitle: "Select All", action: #selector(NSText.selectAll(_:)), keyEquivalent: "a")
+        return menu
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
