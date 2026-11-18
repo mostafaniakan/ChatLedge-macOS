@@ -10,6 +10,7 @@ final class ChatPanelController: NSWindowController, NSWindowDelegate, WKNavigat
 
     private let webView = WKWebView(frame: .zero, configuration: WKWebViewConfiguration())
     private let darkBackground = NSView()
+    private let returnToChatButton = ChatPanelButton()
     private let status = NSTextField(wrappingLabelWithString: "Loading ChatGPT…")
     private var idle = ChatPanelIdle()
     private var idleTimer: Timer?
@@ -166,16 +167,24 @@ final class ChatPanelController: NSWindowController, NSWindowDelegate, WKNavigat
         dragArea.toolTip = "Move ChatLedge"
         content.addSubview(dragArea)
 
-        let collapseImage = NSImage(
-            systemSymbolName: "arrow.down.right.and.arrow.up.left.circle.fill",
-            accessibilityDescription: "Collapse to Widget"
-        ) ?? NSImage(systemSymbolName: "minus.circle.fill", accessibilityDescription: "Collapse to Widget")!
-        let collapseButton = NSButton(image: collapseImage, target: self, action: #selector(collapse))
-        collapseButton.translatesAutoresizingMaskIntoConstraints = false
-        collapseButton.isBordered = false
-        collapseButton.toolTip = "Collapse to Widget"
-        collapseButton.setAccessibilityLabel("Collapse to Widget")
-        content.addSubview(collapseButton)
+        let closeImage = NSImage(
+            systemSymbolName: "xmark.circle.fill",
+            accessibilityDescription: "Close ChatLedge"
+        ) ?? NSImage(systemSymbolName: "xmark.circle", accessibilityDescription: "Close ChatLedge")!
+        let closeButton = ChatPanelButton(image: closeImage, target: self, action: #selector(collapse))
+        closeButton.translatesAutoresizingMaskIntoConstraints = false
+        closeButton.isBordered = false
+        closeButton.toolTip = "Close ChatLedge"
+        closeButton.setAccessibilityLabel("Close ChatLedge")
+        content.addSubview(closeButton)
+
+        returnToChatButton.title = "Back to ChatGPT"
+        returnToChatButton.bezelStyle = .recessed
+        returnToChatButton.target = self
+        returnToChatButton.action = #selector(returnToChat)
+        returnToChatButton.translatesAutoresizingMaskIntoConstraints = false
+        returnToChatButton.isHidden = true
+        content.addSubview(returnToChatButton)
 
         status.alignment = .center
         status.textColor = .secondaryLabelColor
@@ -191,13 +200,15 @@ final class ChatPanelController: NSWindowController, NSWindowDelegate, WKNavigat
             webView.topAnchor.constraint(equalTo: content.topAnchor),
             webView.bottomAnchor.constraint(equalTo: dragArea.topAnchor),
             dragArea.leadingAnchor.constraint(equalTo: content.leadingAnchor),
-            dragArea.trailingAnchor.constraint(equalTo: collapseButton.leadingAnchor, constant: -5),
+            dragArea.trailingAnchor.constraint(equalTo: content.trailingAnchor),
             dragArea.bottomAnchor.constraint(equalTo: content.bottomAnchor),
             dragArea.heightAnchor.constraint(equalToConstant: 34),
-            collapseButton.trailingAnchor.constraint(equalTo: content.trailingAnchor, constant: -21),
-            collapseButton.centerYAnchor.constraint(equalTo: dragArea.centerYAnchor),
-            collapseButton.widthAnchor.constraint(equalToConstant: 28),
-            collapseButton.heightAnchor.constraint(equalToConstant: 28),
+            closeButton.trailingAnchor.constraint(equalTo: content.trailingAnchor, constant: -21),
+            closeButton.centerYAnchor.constraint(equalTo: dragArea.centerYAnchor),
+            closeButton.widthAnchor.constraint(equalToConstant: 28),
+            closeButton.heightAnchor.constraint(equalToConstant: 28),
+            returnToChatButton.leadingAnchor.constraint(equalTo: content.leadingAnchor, constant: 16),
+            returnToChatButton.centerYAnchor.constraint(equalTo: dragArea.centerYAnchor),
             status.centerXAnchor.constraint(equalTo: content.centerXAnchor),
             status.centerYAnchor.constraint(equalTo: content.centerYAnchor),
             status.widthAnchor.constraint(equalTo: content.widthAnchor, constant: -48)
@@ -237,6 +248,14 @@ final class ChatPanelController: NSWindowController, NSWindowDelegate, WKNavigat
         webView.goBack()
     }
 
+    @objc private func returnToChat() {
+        if let previousChat = webView.backForwardList.backList.last(where: { isChatURL($0.url) }),
+           webView.go(to: previousChat) != nil {
+            return
+        }
+        loadChat()
+    }
+
     @objc private func reload() {
         status.isHidden = true
         if webView.url == nil {
@@ -254,6 +273,9 @@ final class ChatPanelController: NSWindowController, NSWindowDelegate, WKNavigat
 
     func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
         status.isHidden = true
+        if let url = webView.url {
+            returnToChatButton.isHidden = isChatURL(url)
+        }
     }
 
     func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!,
@@ -316,8 +338,15 @@ final class ChatPanelController: NSWindowController, NSWindowDelegate, WKNavigat
     }
 
     private func isChatOrigin(_ origin: WKSecurityOrigin) -> Bool {
-        origin.protocol == "https" &&
-            (origin.host == "chatgpt.com" || origin.host.hasSuffix(".chatgpt.com"))
+        origin.protocol == "https" && isChatHost(origin.host)
+    }
+
+    private func isChatURL(_ url: URL) -> Bool {
+        url.scheme == "https" && isChatHost(url.host ?? "")
+    }
+
+    private func isChatHost(_ host: String) -> Bool {
+        host == "chatgpt.com" || host.hasSuffix(".chatgpt.com")
     }
 
     func webView(_ webView: WKWebView, decidePolicyFor response: WKNavigationResponse,
@@ -356,6 +385,11 @@ final class ChatPanelController: NSWindowController, NSWindowDelegate, WKNavigat
         alert.informativeText = failure.localizedDescription
         alert.beginSheetModal(for: window)
     }
+}
+
+@MainActor
+private final class ChatPanelButton: NSButton {
+    override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
 }
 
 @MainActor
@@ -410,6 +444,10 @@ private final class ChatPanelWindow: NSWindow {
         case .keyDown:
             onInteraction?()
             let modifiers = event.modifierFlags.intersection([.command, .option, .control, .shift])
+            if modifiers.isEmpty && event.charactersIgnoringModifiers == "\u{1B}" && attachedSheet == nil {
+                onCollapse?()
+                return
+            }
             if modifiers == .command && attachedSheet == nil {
                 switch event.charactersIgnoringModifiers?.lowercased() {
                 case "w":
