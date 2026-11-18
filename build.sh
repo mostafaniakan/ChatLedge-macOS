@@ -21,15 +21,30 @@ cp Assets/ChatGPTMenuTemplate.png "Assets/ChatGPTMenuTemplate@2x.png" "$app/Cont
 cp Assets/ChatGPTMenuTemplate.png "Assets/ChatGPTMenuTemplate@2x.png" "$widget/Contents/Resources/"
 
 sdk="$(xcrun --sdk macosx --show-sdk-path)"
-arch="$(uname -m)"
-swift_args=(-sdk "$sdk" -target "$arch-apple-macosx14.0" -module-cache-path "$output/ModuleCache" -O -parse-as-library)
 shared=(Sources/ChatBadge.swift Sources/WidgetLinks.swift)
-xcrun swiftc "${swift_args[@]}" Sources/WidgetLinks.swift Sources/WidgetHost.swift \
-    Sources/ChatPanelController.swift Sources/ChatPanelIdle.swift \
-    -o "$app/Contents/MacOS/ChatGPTWidget"
-xcrun swiftc "${swift_args[@]}" -application-extension "${shared[@]}" Sources/ChatWidget.swift \
-    -Xlinker -e -Xlinker _NSExtensionMain \
-    -o "$widget/Contents/MacOS/ChatGPTShortcuts"
+architectures=(arm64 x86_64)
+
+for architecture in "${architectures[@]}"; do
+    swift_args=(
+        -sdk "$sdk"
+        -target "$architecture-apple-macosx14.0"
+        -module-cache-path "$output/ModuleCache-$architecture"
+        -O
+        -parse-as-library
+    )
+    architecture_output="$staging/$architecture"
+    mkdir -p "$architecture_output"
+
+    xcrun swiftc "${swift_args[@]}" Sources/WidgetLinks.swift Sources/WidgetHost.swift \
+        Sources/ChatPanelController.swift Sources/ChatPanelIdle.swift \
+        -o "$architecture_output/ChatGPTWidget"
+    xcrun swiftc "${swift_args[@]}" -application-extension "${shared[@]}" Sources/ChatWidget.swift \
+        -Xlinker -e -Xlinker _NSExtensionMain \
+        -o "$architecture_output/ChatGPTShortcuts"
+done
+
+lipo -create "$staging/arm64/ChatGPTWidget" "$staging/x86_64/ChatGPTWidget" -output "$app/Contents/MacOS/ChatGPTWidget"
+lipo -create "$staging/arm64/ChatGPTShortcuts" "$staging/x86_64/ChatGPTShortcuts" -output "$widget/Contents/MacOS/ChatGPTShortcuts"
 
 signing_identity="${WIDGET_SIGNING_IDENTITY:--}"
 signing_args=(--force --sign "$signing_identity")

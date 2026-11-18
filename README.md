@@ -6,7 +6,7 @@ ChatLedge is an independent project built with AppKit, SwiftUI, WidgetKit, and W
 
 ## Requirements
 
-- macOS 14 Sonoma or later. Tested on macOS 26 on Apple silicon.
+- macOS 14 Sonoma or later on Apple silicon or Intel Macs. Tested on macOS 26 on Apple silicon.
 - Xcode or Apple Command Line Tools with Swift and the macOS SDK
 - Internet access to use ChatGPT
 
