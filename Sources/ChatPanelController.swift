@@ -158,6 +158,7 @@ final class ChatPanelController: NSWindowController, NSWindowDelegate, WKNavigat
 
         webView.navigationDelegate = self
         webView.uiDelegate = self
+        webView.pageZoom = 0.88
         webView.allowsBackForwardNavigationGestures = true
         webView.translatesAutoresizingMaskIntoConstraints = false
         content.addSubview(webView)
