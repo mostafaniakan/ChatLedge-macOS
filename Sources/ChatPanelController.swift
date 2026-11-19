@@ -391,24 +391,31 @@ final class ChatPanelController: NSWindowController, NSWindowDelegate, WKNavigat
 @MainActor
 private final class ChatPanelButton: NSButton {
     override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
+
+    override func resetCursorRects() {
+        super.resetCursorRects()
+        addCursorRect(bounds, cursor: .pointingHand)
+    }
 }
 
 @MainActor
 private final class ChatPanelDragArea: NSView {
     private var dragStart: (pointer: NSPoint, origin: NSPoint)?
+    private var gripRect: NSRect {
+        NSRect(x: bounds.midX - 15, y: bounds.midY - 1.5, width: 30, height: 3)
+    }
 
     override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
 
     override func resetCursorRects() {
         super.resetCursorRects()
-        addCursorRect(bounds, cursor: .openHand)
+        addCursorRect(gripRect.insetBy(dx: -12, dy: -8), cursor: .openHand)
     }
 
     override func draw(_ dirtyRect: NSRect) {
         super.draw(dirtyRect)
-        let grip = NSRect(x: bounds.midX - 15, y: bounds.midY - 1.5, width: 30, height: 3)
         NSColor.white.withAlphaComponent(0.42).setFill()
-        NSBezierPath(roundedRect: grip, xRadius: 1.5, yRadius: 1.5).fill()
+        NSBezierPath(roundedRect: gripRect, xRadius: 1.5, yRadius: 1.5).fill()
     }
 
     override func mouseDown(with event: NSEvent) {
